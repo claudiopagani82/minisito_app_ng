@@ -3,7 +3,13 @@ import Link from 'next/link'
 import { DomusTuaLogo } from '@/components/DomusTuaLogo'
 import property from '@/config/property.json'
 
-export default function BenvenutoPage() {
+export default async function BenvenutoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ w?: string }>
+}) {
+  const { w } = await searchParams
+
   return (
     <div className="relative h-[calc(100vh-3rem)] flex items-center justify-center overflow-hidden">
       {/* Background property photo */}
@@ -16,6 +22,16 @@ export default function BenvenutoPage() {
         aria-hidden="true"
       />
       <div className="absolute inset-0 bg-white/15" aria-hidden="true" />
+
+      {/* Personalized welcome banner — shown when the page is opened via a
+          tracked personalized link (?w=<nome>), see minisito-admintool /l/[token] */}
+      {w && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-white/90 rounded-full shadow-md">
+          <p className="text-[#CC1414] font-semibold text-sm text-center whitespace-nowrap">
+            Benvenuto, {w}!
+          </p>
+        </div>
+      )}
 
       {/* Instruction hint pointing to menu — mobile: unchanged original design */}
       <div className="md:hidden absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-10 pointer-events-none">
