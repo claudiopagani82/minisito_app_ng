@@ -9,13 +9,14 @@ import property from '@/config/property.json'
 const pages = property.navigation.filter((p) => p.enabled)
 
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  // The menu is open only while we are still on the route it was opened from,
+  // so any navigation closes it without an effect.
+  const [openedFrom, setOpenedFrom] = useState<string | null>(null)
+  const isOpen = openedFrom === pathname
 
-  // Close menu on route change
-  useEffect(() => {
-    setIsOpen(false)
-  }, [pathname])
+  const openMenu = () => setOpenedFrom(pathname)
+  const closeMenu = () => setOpenedFrom(null)
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -46,7 +47,7 @@ export function Navigation() {
           </Link>
         </div>
         <button
-          onClick={() => setIsOpen(true)}
+          onClick={openMenu}
           aria-label="Apri menu di navigazione"
           className="flex flex-col gap-1.5 p-2 cursor-pointer"
         >
@@ -60,7 +61,7 @@ export function Navigation() {
       {isOpen && (
         <div
           className="fixed inset-0 z-50 bg-black/50"
-          onClick={() => setIsOpen(false)}
+          onClick={closeMenu}
           aria-hidden="true"
         />
       )}
@@ -78,7 +79,7 @@ export function Navigation() {
             Navigazione
           </span>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={closeMenu}
             aria-label="Chiudi menu"
             className="text-gray-400 hover:text-gray-600 text-2xl leading-none cursor-pointer"
           >
@@ -94,6 +95,7 @@ export function Navigation() {
               <li key={page.href}>
                 <Link
                   href={page.href}
+                  onClick={closeMenu}
                   className={`flex items-center px-6 py-3 text-sm transition-colors hover:bg-red-50 hover:text-[#CC1414] ${
                     isActive
                       ? 'font-bold text-[#CC1414] bg-red-50'
